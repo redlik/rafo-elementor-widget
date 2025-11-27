@@ -42,6 +42,10 @@ class ItineraryWidget extends Widget_Base
         return [ 'rafo-ew-frontend' ];
     }
 
+    public function get_style_depends(): array {
+        return [ 'rafo-ew-frontend' ];
+    }
+
     protected function register_controls(): void
     {
         $this->start_controls_section(

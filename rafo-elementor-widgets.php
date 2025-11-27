@@ -103,7 +103,7 @@ final class Rafo_Elementor_Widgets {
 
     public function frontend_assets() {
         // Example: register frontend assets
-//        wp_register_style( 'rafo-ew-frontend', RAFO_EW_URL . 'assets/css/frontend.css', array(), RAFO_EW_VERSION );
+        wp_register_style( 'rafo-ew-frontend', RAFO_EW_URL . 'assets/css/rafo-frontend.min.css', array(), RAFO_EW_VERSION );
         wp_register_script( 'rafo-ew-frontend', RAFO_EW_URL . 'assets/js/rafo-frontend.js', array( 'jquery' ), RAFO_EW_VERSION, true );
         // Enqueue when needed in widget render or here globally:
         // wp_enqueue_style( 'rafo-ew-frontend' );
