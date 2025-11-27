@@ -107,6 +107,16 @@ class ItineraryWidget extends Widget_Base
         );
 
         $this->add_control(
+                'acf_field_name', [
+                        'label' => esc_html__( 'ACF Field Name', 'elementor' ),
+                        'type' => Controls_Manager::TEXT,
+                        'description' => esc_html__( 'If you want to populate the accordion items from an ACF Repeater field, enter the field name here.', 'elementor' ),
+                        'separator' => 'before',
+                        'label_block' => true,
+                ]
+        );
+
+        $this->add_control(
                 'selected_icon',
                 [
                         'label' => esc_html__( 'Icon', 'elementor' ),
@@ -483,7 +493,21 @@ class ItineraryWidget extends Widget_Base
     protected function render()
     {
         $settings = $this->get_settings_for_display();
+        
         $migrated = isset( $settings['__fa4_migrated']['selected_icon'] );
+        $repeater_fields = $settings['acf_field_name'];
+        $counter = 0;
+
+        while(have_rows($repeater_fields)) {
+            the_row();
+            $tab_title = get_sub_field('title');
+            $tab_content = get_sub_field('description');
+            $settings['tabs'][$counter]['tab_title'] = $tab_title;
+            $settings['tabs'][$counter]['tab_content'] = $tab_content;
+            $counter++;
+
+        }
+
 
         if ( ! isset( $settings['icon'] ) && ! Icons_Manager::is_migration_allowed() ) {
             // @todo: remove when deprecated
@@ -497,18 +521,27 @@ class ItineraryWidget extends Widget_Base
         $is_new = empty( $settings['icon'] ) && Icons_Manager::is_migration_allowed();
         $has_icon = ( ! $is_new || ! empty( $settings['selected_icon']['value'] ) );
         $id_int = substr( $this->get_id_int(), 0, 3 );
+        $index = $counter;
 
         ?>
         <div class="elementor-accordion">
             <?php
-            foreach ( $settings['tabs'] as $index => $item ) :
-            $tab_count = $index + 1;
+            while(have_rows($repeater_fields)) {
+                the_row();
+                $tab_title = get_sub_field('title');
+                $tab_content = get_sub_field('description');
+                $tab_accommodation = get_sub_field('accommodation');                
+                $settings['tabs'][$counter]['tab_title'] = $tab_title;
+                $settings['tabs'][$counter]['tab_content'] = $tab_content;
 
-            $tab_title_setting_key = $this->get_repeater_setting_key( 'tab_title', 'tabs', $index );
+                 $tab_count = $index + 1;
 
-            $tab_content_setting_key = $this->get_repeater_setting_key( 'tab_content', 'tabs', $index );
+            $tab_title_setting_key = $tab_title;
+            error_log(print_r($tab_title_setting_key, true));
 
-            $is_active = ( 0 === $index && 'yes' === $settings['open_first_item'] );
+            $tab_content_setting_key = $tab_content;
+
+            $is_active = ( 0 === $counter && 'yes' === $settings['open_first_item'] );
 
             if ( $is_active ) {
                 $this->add_render_attribute( $tab_title_setting_key, 'class', 'elementor-active' );
@@ -549,15 +582,42 @@ class ItineraryWidget extends Widget_Base
 							</span>
                 <?php endif; ?>
                 <a class="elementor-accordion-title" tabindex="0"><?php
-                    $this->print_unescaped_setting( 'tab_title', 'tabs', $index );
+                    echo( $tab_title );
                     ?></a>
             </<?php Utils::print_validated_html_tag( $settings['title_html_tag'] ); ?>>
             <div <?php $this->print_render_attribute_string( $tab_content_setting_key ); ?>><?php
-                $this->print_text_editor( $item['tab_content'] );
+                $this->print_text_editor( $tab_content );
+                ?>
+                <h3 style="margin-top:20px;">Accommodation</h3>
+                <?php
+                while(have_rows('accommodation_repeater')) {
+                    the_row();
+                    $accommodation_name = get_sub_field('accommodation_name');
+                    $accommodation_description = get_sub_field('accommodation_description');
+                    ?>
+                    <div style="display: flex; gap: 20px; margin-top: 20px;">
+                        <div style="flex-shrink: 0;">
+                         <?php $accommodation_photo = get_sub_field('accommodation_photo');
+                         if ( $accommodation_photo ) {
+                             echo wp_get_attachment_image( $accommodation_photo, 'medium' );
+                         }
+                         ?>
+                        </div>
+                        <div>
+                         <h4><?php echo esc_html( $accommodation_name ); ?></h4>
+                        <?php echo( $accommodation_description ); ?>
+                        </div>
+                    </div>
+                   
+                    <?php
+                }
                 ?></div>
         </div>
-    <?php endforeach; ?>
+
+
         <?php
+                $counter++;
+            } // End while have_rows.
         if ( isset( $settings['faq_schema'] ) && 'yes' === $settings['faq_schema'] ) {
             $json = [
                     '@context' => 'https://schema.org',
