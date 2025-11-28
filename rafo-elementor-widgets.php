@@ -23,12 +23,79 @@ define( 'RAFO_EW_VERSION', '0.1.0' );
 register_activation_hook( RAFO_EW_FILE, 'rafo_ew_activate' );
 register_deactivation_hook( RAFO_EW_FILE, 'rafo_ew_deactivate' );
 
+add_action( 'acf/init', 'add_tour_banner_field_group' );
+
 function rafo_ew_activate() {
-    // Run activation tasks here (capability setup, default options, etc.)
-}
+       	
+    }
 
 function rafo_ew_deactivate() {
     // Clean up tasks on deactivation if needed.
+}
+
+function add_tour_banner_field_group() {
+    if (!is_field_group_exists('Tour Banner')) {
+        if( function_exists('acf_add_local_field_group') ):
+
+        acf_add_local_field_group(array(
+                'key' => 'group_'. md5('tour_banner'),
+                'title' => 'Tour Banner',
+                'fields' => array(
+                    array(
+                        'key' => 'field_6929bb74bed86',
+                        'label' => 'Tour banner',
+                        'name' => 'tour_banner',
+                        'aria-label' => '',
+                        'type' => 'text',
+                        'instructions' => 'Insert text for the banner (max 20 characters)',
+                        'required' => 0,
+                        'conditional_logic' => 0,
+                        'wrapper' => array(
+                            'width' => '',
+                            'class' => '',
+                            'id' => '',
+                        ),
+                        'default_value' => '',
+                        'maxlength' => 20,
+                        'placeholder' => '',
+                        'prepend' => '',
+                        'append' => '',
+                    ),
+                ),
+                'location' => array(
+                    array(
+                        array(
+                            'param' => 'post_type',
+                            'operator' => '==',
+                            'value' => 'tours',
+                        ),
+                    ),
+                ),
+                'menu_order' => 0,
+                'position' => 'normal',
+                'style' => 'default',
+                'label_placement' => 'top',
+                'instruction_placement' => 'label',
+                'hide_on_screen' => '',
+                'active' => true,
+                'description' => '',
+                'show_in_rest' => 0,
+            ));
+        endif;
+    }
+}
+
+function is_field_group_exists($value, $type='post_title') {
+        $exists = false;
+        if ($field_groups = get_posts(array('post_type'=>'acf-field-group'))) {
+            foreach ($field_groups as $field_group) {
+                error_log($field_group->$type);
+                if ($field_group->$type == $value) {
+                    $exists = true;
+                }
+            }
+        }
+        return $exists;
 }
 
 /**
@@ -94,16 +161,22 @@ final class Rafo_Elementor_Widgets {
         }
 
         require_once RAFO_EW_DIR . 'inc/Elementor/ItineraryWidget.php';    
+        require_once RAFO_EW_DIR . 'inc/Elementor/BannerWidget.php';    
 
         // Register the widget with Elementor
         if ( class_exists( 'ItineraryWidget' ) ) {
             $widgets_manager->register( new \ItineraryWidget() );
         }
+
+        if ( class_exists( 'BannerWidget' ) ) {
+            $widgets_manager->register( new \BannerWidget() );
+        };
     }
 
     public function frontend_assets() {
         // Example: register frontend assets
         wp_register_style( 'rafo-ew-frontend', RAFO_EW_URL . 'assets/css/rafo-frontend.min.css', array(), RAFO_EW_VERSION );
+        wp_register_style( 'rafo-ew-banner', RAFO_EW_URL . 'assets/css/rafo-banner.css', array(), RAFO_EW_VERSION );
         wp_register_script( 'rafo-ew-frontend', RAFO_EW_URL . 'assets/js/rafo-frontend.js', array( 'jquery' ), RAFO_EW_VERSION, true );
         // Enqueue when needed in widget render or here globally:
         // wp_enqueue_style( 'rafo-ew-frontend' );
