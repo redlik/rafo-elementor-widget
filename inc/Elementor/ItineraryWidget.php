@@ -43,7 +43,7 @@ class ItineraryWidget extends Widget_Base
     }
 
     public function get_style_depends(): array {
-        return [ 'rafo-ew-frontend' ];
+        return [ 'rafo-ew-frontend', 'rafo-styles' ];
     }
 
     protected function register_controls(): void
@@ -592,24 +592,34 @@ class ItineraryWidget extends Widget_Base
             <div <?php $this->print_render_attribute_string( $tab_content_setting_key ); ?>><?php
                 $this->print_text_editor( $tab_content );
                 ?>
-                <h3 style="margin-top:20px;">Accommodation</h3>
+                <?php if (have_rows('accommodation_repeater')) {
+                        echo('<h4 style="margin-top:20px;">Accommodation</h4>');
+                }?>
                 <?php
                 while(have_rows('accommodation_repeater')) {
                     the_row();
                     $accommodation_name = get_sub_field('accommodation_name');
                     $accommodation_description = get_sub_field('accommodation_description');
                     ?>
-                    <div style="display: flex; gap: 20px; margin-top: 20px;">
-                        <div style="flex-shrink: 0;">
+                    <div class="accommodation-item">
+                        <div style="flex-shrink: 0;" class="accommodation-photo">
                          <?php $accommodation_photo = get_sub_field('accommodation_photo');
                          if ( $accommodation_photo ) {
-                             echo wp_get_attachment_image( $accommodation_photo, 'medium' );
+                                $image_attributes = array(
+                                    'alt' => 'Photo of ' . $accommodation_name,
+                                    'loading' => 'lazy',
+                                    'class' => 'accommodation-image',
+                                );
+                             echo wp_get_attachment_image( $accommodation_photo, 'medium', false, $image_attributes );
                          }
                          ?>
                         </div>
-                        <div>
-                         <h4><?php echo esc_html( $accommodation_name ); ?></h4>
-                        <?php echo( $accommodation_description ); ?>
+                        <div class="accommodation-details">
+                         <h5 class="accommodation-name"><?php echo esc_html( $accommodation_name ); ?></h5>
+                         <div class="accommodation-details">
+                                <?php echo( $accommodation_description ); ?>
+                         </div>
+                        
                         </div>
                     </div>
                    

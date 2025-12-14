@@ -3,7 +3,7 @@
  * Plugin Name: Rafo Elementor Widgets
  * Plugin URI:  https://example.com
  * Description: A starter/template plugin to add custom Elementor widgets.
- * Version:     0.1.0
+ * Version:     0.9.0
  * Author:      Ralph
  * Text Domain: rafo-elementor-widgets
  * Domain Path: /languages
@@ -60,6 +60,34 @@ function add_tour_banner_field_group() {
                         'placeholder' => '',
                         'prepend' => '',
                         'append' => '',
+                    ),
+                    array(
+                        'key' => 'field_6932cff7e6bf8',
+                        'label' => 'Banner Colour',
+                        'name' => 'banner_colour',
+                        'aria-label' => '',
+                        'type' => 'select',
+                        'instructions' => '',
+                        'required' => 0,
+                        'conditional_logic' => 0,
+                        'wrapper' => array(
+                            'width' => '',
+                            'class' => '',
+                            'id' => '',
+                        ),
+                        'choices' => array(
+                            '#a80e03' => 'Red',
+                            '#dbb716' => 'Yellow',
+                            '#1679db' => 'Blue',
+                            '#37db16' => 'Green',
+                        ),
+                        'default_value' => '',
+                        'return_format' => 'value',
+                        'multiple' => 0,
+                        'allow_null' => 0,
+                        'ui' => 0,
+                        'ajax' => 0,
+                        'placeholder' => 'Select banner colour',
                     ),
                 ),
                 'location' => array(
@@ -177,6 +205,7 @@ final class Rafo_Elementor_Widgets {
         // Example: register frontend assets
         wp_register_style( 'rafo-ew-frontend', RAFO_EW_URL . 'assets/css/rafo-frontend.min.css', array(), RAFO_EW_VERSION );
         wp_register_style( 'rafo-ew-banner', RAFO_EW_URL . 'assets/css/rafo-banner.css', array(), RAFO_EW_VERSION );
+        wp_register_style( 'rafo-styles', RAFO_EW_URL . 'assets/css/rafo-styles.css', array(), RAFO_EW_VERSION );
         wp_register_script( 'rafo-ew-frontend', RAFO_EW_URL . 'assets/js/rafo-frontend.js', array( 'jquery' ), RAFO_EW_VERSION, true );
         // Enqueue when needed in widget render or here globally:
         // wp_enqueue_style( 'rafo-ew-frontend' );

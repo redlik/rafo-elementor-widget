@@ -1,0 +1,34 @@
+.accommodation-item {
+    margin-top: 20px;
+    display: flex;
+}
+
+.accommodation-name {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    font-weight: 600;
+}
+
+/* Phone (Mobile) */
+@media (max-width: 640px) {
+    .accommodation-item {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+/* Tablet */
+@media (min-width: 641px) and (max-width: 1024px) {
+    .accommodation-item {
+        flex-direction: column;
+        gap: 15px;
+    }
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+    .accommodation-item {
+        flex-direction: row;
+        gap: 20px;
+    }
+}

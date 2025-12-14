@@ -83,30 +83,22 @@ class BannerWidget extends Widget_Base {
             [
                 'label' => __( 'Text Color', 'rafo-elementor-widgets' ),
                 'type' => Controls_Manager::COLOR,
+                'default' => '#34414f',
                 'selectors' => [
                     '{{WRAPPER}} .raf-tag' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .raf-banner-tour' => 'color: {{VALUE}};',
+                    '{{WRAPPER}} .raf-banner-listing' => 'color: {{VALUE}};',
                 ],
             ]
         );
 
-        // Background color
-        $this->add_control(
-            'background_color',
-            [
-                'label' => __( 'Background Color', 'rafo-elementor-widgets' ),
-                'type' => Controls_Manager::COLOR,
-                'selectors' => [
-                    '{{WRAPPER}} .raf-tag' => 'background-color: {{VALUE}};',
-                ],
-                'separator' => 'after',
-            ]
-        );
+        
 
         // Font size (slider)
         $this->add_control(
-            'font_size',
+            'font_size_tour',
             [
-                'label' => __( 'Font Size', 'rafo-elementor-widgets' ),
+                'label' => __( 'Font Size in Tour page', 'rafo-elementor-widgets' ),
                 'type' => Controls_Manager::SLIDER,
                 'size_units' => [ 'px', 'em', 'rem' ],
                 'range' => [
@@ -129,6 +121,37 @@ class BannerWidget extends Widget_Base {
                 ],
                 'selectors' => [
                     '{{WRAPPER}} .raf-tag' => 'font-size: {{SIZE}}{{UNIT}};',
+                    '{{WRAPPER}} .raf-banner-tour' => 'font-size: {{SIZE}}{{UNIT}};',
+                ],
+            ]
+        );
+
+        $this->add_control(
+            'font_size_listing',
+            [
+                'label' => __( 'Font Size in Listing page', 'rafo-elementor-widgets' ),
+                'type' => Controls_Manager::SLIDER,
+                'size_units' => [ 'px', 'em', 'rem' ],
+                'range' => [
+                    'px' => [
+                        'min' => 8,
+                        'max' => 72,
+                    ],
+                    'em' => [
+                        'min' => 0.5,
+                        'max' => 6,
+                    ],
+                    'rem' => [
+                        'min' => 0.5,
+                        'max' => 6,
+                    ],
+                ],
+                'default' => [
+                    'size' => 14,
+                    'unit' => 'px',
+                ],
+                'selectors' => [
+                    '{{WRAPPER}} .raf-banner-listing' => 'font-size: {{SIZE}}{{UNIT}};',
                 ],
             ]
         );
@@ -142,15 +165,25 @@ class BannerWidget extends Widget_Base {
         if(get_field( $field )) {
             $text = get_field( $field );
         } else {
-            $text = 'This ACF field does not exist.';
+            $text = '';
+        }
+        if(get_field('banner_colour')) {
+            $this->add_render_attribute( 'wrapper', 'style', 'background-color: ' . get_field('banner_colour') . ';' );
         }
 
-        if('tour' === $settings['render_context']) {
+        if($text != '') {
+            if('tour' === $settings['render_context']) {
             // Ensure we're in a tour post context
              ?>
-                <span class="raf-banner-tour"><?php echo esc_html( $text ); ?></span>
+                <span <?php echo($this->get_render_attribute_string('wrapper')) ?> class="raf-banner-tour"><?php echo esc_html( $text ); ?></span>
              <?php
+        } else {
+            ?>
+                <span class="raf-banner-listing" <?php echo($this->get_render_attribute_string('wrapper')) ?>><?php echo esc_html( $text ); ?></span>
+            <?php
         }
+        }
+        
 
         
     }
